@@ -1,29 +1,33 @@
-import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Data
 public class Event {
 
-    String eventName;
-    LocalDateTime currentTime = LocalDateTime.now();
-    LocalDateTime startTime = currentTime.plusHours(1);
-    LocalDateTime endTime = startTime.plusMinutes(90);
-    String pattern = "hh:mm a";
-    String startHours;
-    String startMin;
-    String endHours;
-    String endMin;
-    String startDayTime;
-    String endDayTime;
+    private String eventName;
+    private LocalDateTime currentTime = LocalDateTime.now();
+    private int addStartMin;
+    private int addEndMin;
+    private String pattern = "hh:mm a";
+    private String startHours;
+    private String startMin;
+    private String endHours;
+    private String endMin;
+    private String startDayTime;
+    private String endDayTime;
 
-    public Event(String eventName) {
+    public Event(String eventName, int addStartMin, int addEndMin) {
         this.eventName = eventName;
+        this.addStartMin = addStartMin;
+        this.addEndMin = addEndMin;
+    }
+
+    public String getEventName() {
+        return eventName;
     }
 
     public String getStartHours() {
-        startHours = startTime.format(DateTimeFormatter.ofPattern(pattern)).substring(0, 2);
+        startHours = currentTime.plusMinutes(addStartMin).format(DateTimeFormatter.ofPattern(pattern)).substring(0, 2);
         if (Integer.parseInt(startHours) < 10) {
             startHours = startHours.substring(1);
         }
@@ -31,12 +35,12 @@ public class Event {
     }
 
     public String getStartMin() {
-        startMin = startTime.format(DateTimeFormatter.ofPattern(pattern)).substring(3, 5);
+        startMin = currentTime.plusMinutes(addStartMin).format(DateTimeFormatter.ofPattern(pattern)).substring(3, 5);
         return startMin;
     }
 
     public String getEndHours() {
-        endHours = endTime.format(DateTimeFormatter.ofPattern(pattern)).substring(0, 2);
+        endHours = currentTime.plusMinutes(addEndMin).format(DateTimeFormatter.ofPattern(pattern)).substring(0, 2);
         if (Integer.parseInt(endHours) < 10) {
             endHours = endHours.substring(1);
         }
@@ -44,17 +48,17 @@ public class Event {
     }
 
     public String getEndMin() {
-        endMin = endTime.format(DateTimeFormatter.ofPattern(pattern)).substring(3, 5);
+        endMin = currentTime.plusMinutes(addEndMin).format(DateTimeFormatter.ofPattern(pattern)).substring(3, 5);
         return endMin;
     }
 
     public String getStartDayTime() {
-        startDayTime = startTime.format(DateTimeFormatter.ofPattern(pattern)).substring(6,8);
+        startDayTime = currentTime.plusMinutes(addStartMin).format(DateTimeFormatter.ofPattern(pattern)).substring(6, 8);
         return startDayTime;
     }
 
     public String getEndDayTime() {
-        endDayTime = endTime.format(DateTimeFormatter.ofPattern(pattern)).substring(6,8);
+        endDayTime = currentTime.plusMinutes(addEndMin).format(DateTimeFormatter.ofPattern(pattern)).substring(6, 8);
         return endDayTime;
     }
 
@@ -68,7 +72,20 @@ public class Event {
         return expectedTime;
     }
 
+    public String getIosStartMin() {
+        startMin = getStartMin();
+        return String.valueOf(5 * (Math.round(Integer.parseInt(startMin) / 5))); //Time picker for minutes is a multiple of 5
+    }
+
+    public String getIosEndMin() {
+        endMin = getEndMin();
+        return String.valueOf(5 * (Math.round(Integer.parseInt(endMin) / 5))); //Time picker for minutes is a multiple of 5
+    }
 
 
+    public String getIosEventDetails() {
+        String expectedDetails = String.format("%s, from %s:%s %s to %s:%s %s", getEventName(), getStartHours(), getIosStartMin(), getStartDayTime(), getEndHours(), getIosEndMin(), getEndDayTime());
+        return expectedDetails;
+    }
 }
 
