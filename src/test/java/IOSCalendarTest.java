@@ -1,10 +1,8 @@
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.ios.IOSDriver;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.MalformedURLException;
@@ -59,21 +57,22 @@ public class IOSCalendarTest {
         String expectedDetails = driver.findElement(MobileBy.xpath(String.format("//XCUIElementTypeButton[contains(@name, '%s')]", testEvent.getEventName()))).getText();
         String actualDetails = testEvent.getIosEventDetails();
 
-        Assert.assertEquals("Expected event details don't match to actual ones", expectedDetails,actualDetails);
+        Assert.assertEquals("Expected event details don't match to actual ones", expectedDetails, actualDetails);
     }
 
-    @After
+    @AfterEach
     public void deleteEvent() {
         driver.closeApp();
         driver.launchApp();
-        Assert.assertTrue("The event is missed in the list of events", !driver.findElements(MobileBy.xpath(String.format("//XCUIElementTypeButton[contains(@name, '%s')]", testEvent.getEventName()))).isEmpty());
-        HashMap<String, String> scrollObject = new HashMap<>();
-        scrollObject.put("direction", "up");
-        scrollObject.put("index", "13");
-        driver.executeScript("mobile: swipe", scrollObject);
-        driver.findElement(MobileBy.xpath(String.format("//XCUIElementTypeButton[contains(@name, '%s')]", testEvent.getEventName()))).click();
-        driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeStaticText[`label == 'Delete Event'`]")).click();
-        driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Delete Event'`][1]")).click();
+        if (!driver.findElements(MobileBy.xpath(String.format("//XCUIElementTypeButton[contains(@name, '%s')]", testEvent.getEventName()))).isEmpty()) {
+            HashMap<String, String> scrollObject = new HashMap<>();
+            scrollObject.put("direction", "up");
+            scrollObject.put("index", "13");
+            driver.executeScript("mobile: swipe", scrollObject);
+            driver.findElement(MobileBy.xpath(String.format("//XCUIElementTypeButton[contains(@name, '%s')]", testEvent.getEventName()))).click();
+            driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeStaticText[`label == 'Delete Event'`]")).click();
+            driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Delete Event'`][1]")).click();
+        }
     }
 
     @After

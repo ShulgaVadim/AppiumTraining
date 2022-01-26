@@ -1,9 +1,7 @@
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.MalformedURLException;
@@ -69,11 +67,12 @@ public class AndroidCalendarTest {
     @After
     public void deleteEvent() {
         driver.launchApp();
-        Assert.assertTrue("The event is missed in the list of events", !driver.findElements(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).isEmpty());
-        driver.findElement(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).click();
-        driver.findElement(MobileBy.AccessibilityId("More options")).click();
-        driver.findElement(MobileBy.xpath("//android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.TextView")).click();
-        driver.findElement(MobileBy.id("android:id/button1")).click();
+        if (!driver.findElements(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).isEmpty()) {
+            driver.findElement(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).click();
+            driver.findElement(MobileBy.AccessibilityId("More options")).click();
+            driver.findElement(MobileBy.xpath("//android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.TextView")).click();
+            driver.findElement(MobileBy.id("android:id/button1")).click();
+        }
     }
 
     @After
