@@ -1,9 +1,9 @@
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -32,30 +32,30 @@ public class AndroidCalendarTest {
 
     @Test
     public void createEvent() {
-        driver.findElement(MobileBy.id("floating_action_button")).click();
-        driver.findElement(MobileBy.AccessibilityId("Event button")).click();
-        driver.findElement(MobileBy.id("title_edit_text")).sendKeys(testEvent.getEventName());
-        driver.findElement(MobileBy.xpath("//android.widget.Button[contains(@content-desc, 'Start time')]")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().description(\"Create new event and more\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Event\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.google.android.calendar:id/title_edit_text\")")).sendKeys(testEvent.getEventName());
 
         //enter start date
-        driver.findElement(MobileBy.id("android:id/toggle_mode")).click();
-        driver.findElement(MobileBy.id("android:id/input_hour")).sendKeys(testEvent.getStartHours());
-        driver.findElement(MobileBy.id("android:id/input_minute")).sendKeys(testEvent.getStartMin());
-        driver.findElement(MobileBy.id("android:id/button1")).click();
-        driver.findElement(MobileBy.xpath("//android.widget.Button[contains(@content-desc, 'End time')]")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"Start time\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.ImageButton\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"android:id/input_hour\")")).sendKeys(testEvent.getStartHours());
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"android:id/input_minute\")")).sendKeys(testEvent.getStartMin());
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"OK\")")).click();
 
         //enter end date
-        driver.findElement(MobileBy.id("android:id/toggle_mode")).click();
-        driver.findElement(MobileBy.id("android:id/input_hour")).sendKeys(testEvent.getEndHours());
-        driver.findElement(MobileBy.id("android:id/input_minute")).sendKeys(testEvent.getEndMin());
-        driver.findElement(MobileBy.id("android:id/button1")).click();
-        driver.findElement(MobileBy.id("save")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"End time\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.ImageButton\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"android:id/input_hour\")")).sendKeys(testEvent.getEndHours());
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"android:id/input_minute\")")).sendKeys(testEvent.getEndMin());
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"OK\")")).click();
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Save\")")).click();
 
         //validation
-        Assert.assertTrue("The event is missed in the list of events", !driver.findElements(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).isEmpty());
-        driver.findElement(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).click();
-        String actualName = driver.findElement(MobileBy.id("title")).getText();
-        String actualTime = driver.findElement(MobileBy.id("time")).getText();
+        Assert.assertTrue("The event is missed in the list of events", !driver.findElements(MobileBy.AndroidUIAutomator(String.format("new UiSelector().descriptionContains(\"%s\")", testEvent.getEventName()))).isEmpty());
+        driver.findElement(MobileBy.AndroidUIAutomator(String.format("new UiSelector().descriptionContains(\"%s\")", testEvent.getEventName()))).click();
+        String actualName = driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.google.android.calendar:id/title\")")).getText();
+        String actualTime = driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.google.android.calendar:id/time\")")).getText();
         String expectedTime = testEvent.getAndroidEventDetails();
 
         Assertions.assertAll(
@@ -67,11 +67,11 @@ public class AndroidCalendarTest {
     @After
     public void deleteEvent() {
         driver.launchApp();
-        if (!driver.findElements(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).isEmpty()) {
-            driver.findElement(MobileBy.xpath(String.format("//android.view.View[contains(@content-desc, '%s')]", testEvent.getEventName()))).click();
-            driver.findElement(MobileBy.AccessibilityId("More options")).click();
-            driver.findElement(MobileBy.xpath("//android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.TextView")).click();
-            driver.findElement(MobileBy.id("android:id/button1")).click();
+        if (!driver.findElements(MobileBy.AndroidUIAutomator(String.format("new UiSelector().descriptionContains(\"%s\")", testEvent.getEventName()))).isEmpty()) {
+            driver.findElement(MobileBy.AndroidUIAutomator(String.format("new UiSelector().descriptionContains(\"%s\")", testEvent.getEventName()))).click();
+            driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().description(\"More options\")")).click();
+            driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Delete\")")).click();
+            driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"android:id/button1\")")).click();
         }
     }
 
