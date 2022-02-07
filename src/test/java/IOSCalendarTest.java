@@ -4,6 +4,7 @@ import io.appium.java_client.ios.IOSDriver;
 import org.junit.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -13,17 +14,18 @@ import java.util.concurrent.TimeUnit;
 public class IOSCalendarTest {
 
     IOSDriver driver;
-    Event testEvent = new Event("Test Event", 60, 150);
+    Event testEvent = new Event("Test Event", 60, 70);
 
     @Before
     public void setUp() throws MalformedURLException {
         URL driverURL = new URL("http://0.0.0.0:4723/wd/hub");
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformNme", "iOS");
+        caps.setCapability("platformName", "iOS");
+        caps.setCapability("platformVersion", "15.2");
         caps.setCapability("automationName", "XCUITest");
         caps.setCapability("udid", "985A2290-A9D8-4A7C-89B2-73C6211EAC93");
         caps.setCapability("bundleId", "com.apple.mobilecal");
-        caps.setCapability("deviceName", "sim_11_ios");
+        caps.setCapability("deviceName", "iPhone Simulator");
         caps.setCapability("noReset", "true");
         caps.setCapability("newCommandTimeout", 100);
         driver = new IOSDriver(driverURL, caps);
@@ -75,8 +77,10 @@ public class IOSCalendarTest {
     }
 
     @After
-    public void driverTearDown() {
+    public void driverTearDown() throws IOException {
+        Runtime.getRuntime().exec("xcrun simctl shutdown 985A2290-A9D8-4A7C-89B2-73C6211EAC93");
         driver.quit();
+
     }
 }
 

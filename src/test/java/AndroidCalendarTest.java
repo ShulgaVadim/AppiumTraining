@@ -4,6 +4,7 @@ import org.junit.*;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -18,13 +19,19 @@ public class AndroidCalendarTest {
     public void setUp() throws MalformedURLException {
         URL driverURL = new URL("http://0.0.0.0:4723/wd/hub");
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformNme", "Android");
+        caps.setCapability("platformName", "Android");
         caps.setCapability("automationName", "UiAutomator2");
         caps.setCapability("udid", "emulator-5554");
+        caps.setCapability("deviceName", "Pixel_2_API_29");
+        caps.setCapability("avd", "Pixel_2_API_29");
+//        caps.setCapability("deviceReadyTimeout","15");
+//        caps.setCapability("avdLaunchTimeout","15000");
         caps.setCapability("appPackage", "com.google.android.calendar");
         caps.setCapability("appActivity", "com.android.calendar.LaunchActivity");
         caps.setCapability("noReset", "true");
         caps.setCapability("newCommandTimeout", 100);
+        caps.setCapability("unlockType", "pin");
+        caps.setCapability("unlockKey", "1234");
 
         driver = new AndroidDriver(driverURL, caps);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -34,7 +41,7 @@ public class AndroidCalendarTest {
     public void createEvent() {
         driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().description(\"Create new event and more\")")).click();
         driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Event\")")).click();
-        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.google.android.calendar:id/title_edit_text\")")).sendKeys(testEvent.getEventName());
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.google.android.calendar:id/title\")")).sendKeys(testEvent.getEventName());
 
         //enter start date
         driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"Start time\")")).click();
@@ -76,8 +83,9 @@ public class AndroidCalendarTest {
     }
 
     @After
-    public void driverTearDown() {
+    public void driverTearDown() throws IOException {
         driver.quit();
+        Runtime.getRuntime().exec("adb -s emulator-5554 emu kill");
     }
 }
 
