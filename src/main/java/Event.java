@@ -15,15 +15,20 @@ public class Event {
     private String endMin;
     private String startDayTime;
     private String endDayTime;
+    private String location;
 
-    public Event(String eventName, int addStartMin, int addEndMin) {
+    public Event(String eventName, int addStartMin, int addEndMin, String city) {
         this.eventName = eventName;
         this.addStartMin = addStartMin;
         this.addEndMin = addEndMin;
+        this.location = city;
     }
 
     public String getEventName() {
         return eventName;
+    }
+    public String getLocation() {
+        return location;
     }
 
     public String getStartHours() {
@@ -84,7 +89,7 @@ public class Event {
 
 
     public String getIosEventDetails() {
-        String expectedDetails = String.format("%s, from %s:%s %s to %s:%s %s", getEventName(), getStartHours(), getIosStartMin(), getStartDayTime(), getEndHours(), getIosEndMin(), getEndDayTime());
+        String expectedDetails = String.format("%s, %s, from %s:%s %s to %s:%s %s", getEventName(), getLocation(), getStartHours(), getIosStartMin(), getStartDayTime(), getEndHours(), getIosEndMin(), getEndDayTime());
         return expectedDetails;
     }
 }
