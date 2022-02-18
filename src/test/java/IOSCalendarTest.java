@@ -1,24 +1,21 @@
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.TouchAction;
+import Screens.IoS.CalendarIosScreen;
+import Screens.IoS.NewEventScreen;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.touch.LongPressOptions;
 import org.junit.*;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static io.appium.java_client.touch.offset.ElementOption.element;
 
 public class IOSCalendarTest {
 
     IOSDriver driver;
-    Event testEvent = new Event("Test Event", 60, 70, "Chicago");
+    CalendarIosScreen calendarIosScreen;
+    NewEventScreen newEventScreen;
+    Event testEvent = new Event("Test Event", 2, 5, "Chicago");
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -34,64 +31,49 @@ public class IOSCalendarTest {
         caps.setCapability("newCommandTimeout", 100);
         driver = new IOSDriver(driverURL, caps);
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        calendarIosScreen = new CalendarIosScreen(driver);
+        newEventScreen = new NewEventScreen(driver);
     }
 
     @Test
     public void createEvent() {
         driver.resetApp();
-        driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Today'`]")).click();
-        driver.findElement(MobileBy.iOSNsPredicateString("label == 'Add'")).click();
-        driver.findElement(MobileBy.iOSNsPredicateString("name == 'Title'")).sendKeys(testEvent.getEventName());
+        calendarIosScreen
+                .tapTodayButton()
+                .tapAddNewEventButton();
+        newEventScreen
+                .enterTitle(testEvent.getEventName())
+                .enterLocation(testEvent.getLocation())
+                .enterStartDate(testEvent.getStartHours(), testEvent.getStartMin(), testEvent.getStartDayTime())
+                .enterEndDate(testEvent.getEndHours(), testEvent.getEndMin(), testEvent.getEndDayTime())
+                .tapAddButton();
+        Assert.assertTrue("The event is missed in the list of events", calendarIosScreen.isEventCreated(testEvent.getEventName()));
+        Assert.assertEquals("Expected event details don't match to actual ones", calendarIosScreen.getExpectedDetails(testEvent.getEventName()), testEvent.getIosEventDetails());
+    }
 
-        //enter location
-        driver.findElement(MobileBy.iOSNsPredicateString("name == 'Location or Video Call'")).click();
-        driver.findElement(MobileBy.AccessibilityId("Enter Location or Video Call")).sendKeys(testEvent.getLocation());
-        driver.findElement(MobileBy.AccessibilityId("Done")).click();
-//        driver.hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
-
-        //enter start date
-        driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeOther[`label == 'Date and Time Picker'`][1]/XCUIElementTypeButton[2]")).click();
-        List<MobileElement> wheelsStart = driver.findElements(MobileBy.iOSClassChain("**/XCUIElementTypePickerWheel"));
-        wheelsStart.get(0).sendKeys(testEvent.getStartHours());
-        wheelsStart.get(1).sendKeys(testEvent.getIosStartMin());
-        wheelsStart.get(2).sendKeys(testEvent.getStartDayTime());
-
-        //enter end date
-        driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeOther[`label == 'Date and Time Picker'`][2]/XCUIElementTypeButton[2]")).click();
-        List<MobileElement> wheelsEnd = driver.findElements(MobileBy.iOSClassChain("**/XCUIElementTypePickerWheel"));
-        wheelsEnd.get(0).sendKeys(testEvent.getEndHours());
-        wheelsEnd.get(1).sendKeys(testEvent.getIosEndMin());
-        wheelsEnd.get(2).sendKeys(testEvent.getEndDayTime());
-        driver.findElement(MobileBy.iOSNsPredicateString("label == 'Add' AND visible == 1")).click();
-
-        //validation
-        Assert.assertTrue("The event is missed in the list of events", !driver.findElements(MobileBy.iOSClassChain(String.format("**/XCUIElementTypeButton[`name CONTAINS[cd] '%s'`]", testEvent.getEventName()))).isEmpty());
-        String expectedDetails = driver.findElement(MobileBy.iOSClassChain(String.format("**/XCUIElementTypeButton[`name CONTAINS[cd] '%s'`]", testEvent.getEventName()))).getText();
-        String actualDetails = testEvent.getIosEventDetails();
-
-        Assert.assertEquals("Expected event details don't match to actual ones", expectedDetails, actualDetails);
+    @Test
+    public void createEventWithAlert() {
+        driver.resetApp();
+        calendarIosScreen
+                .tapTodayButton()
+                .tapAddNewEventButton();
+        newEventScreen
+                .enterTitle(testEvent.getEventName())
+                .enterStartDate(testEvent.getStartHours(), testEvent.getStartMin(), testEvent.getStartDayTime())
+                .enterEndDate(testEvent.getEndHours(), testEvent.getEndMin(), testEvent.getEndDayTime())
+                .addAlert()
+                .tapAddButton();
+        Assert.assertTrue("The event is missed in the list of events", calendarIosScreen.isEventCreated(testEvent.getEventName()));
+        calendarIosScreen.showNotifications();
+        Assert.assertEquals("Expected event details don't match to actual ones", calendarIosScreen.getDetailsFromAlert(testEvent.getEventName()), testEvent.getIosDetailsFromPush());
+        calendarIosScreen.hideNotifications();
     }
 
     @After
     public void deleteEvent() {
         driver.closeApp();
         driver.launchApp();
-        if (!driver.findElements(MobileBy.iOSClassChain(String.format("**/XCUIElementTypeButton[`name CONTAINS[cd] '%s'`]", testEvent.getEventName()))).isEmpty()) {
-            driver.findElement(MobileBy.AccessibilityId("List")).click();
-            driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Today'`]")).click();
-            MobileElement event = (MobileElement) driver.findElement(MobileBy.iOSClassChain(String.format("**/XCUIElementTypeCell[`name CONTAINS[cd] '%s'`]", testEvent.getEventName())));
-            new TouchAction(driver)
-                    .longPress(LongPressOptions
-                            .longPressOptions()
-                            .withElement(element(event))
-                            .withDuration(Duration.ofSeconds(3)))
-                    .release()
-                    .perform();
-
-            driver.findElement(MobileBy.AccessibilityId("Delete Event")).click();
-            driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Delete Event'`]")).click();
-            driver.findElement(MobileBy.AccessibilityId("List")).click();
-        }
+        calendarIosScreen.deleteEvent(testEvent.getEventName());
     }
 
     @After
@@ -100,4 +82,5 @@ public class IOSCalendarTest {
         driver.quit();
     }
 }
+
 

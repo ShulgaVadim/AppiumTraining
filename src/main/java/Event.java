@@ -27,6 +27,7 @@ public class Event {
     public String getEventName() {
         return eventName;
     }
+
     public String getLocation() {
         return location;
     }
@@ -77,19 +78,23 @@ public class Event {
         return expectedTime;
     }
 
-    public String getIosStartMin() {
-        startMin = getStartMin();
-        return String.valueOf(5 * (Math.round(Integer.parseInt(startMin) / 5))); //Time picker for minutes is a multiple of 5
-    }
-
-    public String getIosEndMin() {
-        endMin = getEndMin();
-        return String.valueOf(5 * (Math.round(Integer.parseInt(endMin) / 5))); //Time picker for minutes is a multiple of 5
-    }
-
-
     public String getIosEventDetails() {
-        String expectedDetails = String.format("%s, %s, from %s:%s %s to %s:%s %s", getEventName(), getLocation(), getStartHours(), getIosStartMin(), getStartDayTime(), getEndHours(), getIosEndMin(), getEndDayTime());
+        String expectedDetails = String.format("%s, %s, from %s:%s %s to %s:%s %s", getEventName(), getLocation(), getStartHours(), getStartMin(), getStartDayTime(), getEndHours(), getEndMin(), getEndDayTime());
+        return expectedDetails;
+    }
+
+    public String getAndroidTimeFromPush() {
+        String expectedTime;
+        if (getEndDayTime().equals(getStartDayTime())) {
+            expectedTime = String.format("%s:%s – %s:%s %s", getStartHours(), getStartMin(), getEndHours(), getEndMin(), getEndDayTime());
+        } else {
+            expectedTime = String.format("%s:%s %s – %s:%s %s", getStartHours(), getStartMin(), getStartDayTime(), getEndHours(), getEndMin(), getEndDayTime());
+        }
+        return expectedTime;
+    }
+
+    public String getIosDetailsFromPush() {
+        String expectedDetails = String.format("CALENDAR, now, %s, Today at %s:%s %s", eventName, startHours, startMin, startDayTime);
         return expectedDetails;
     }
 }
