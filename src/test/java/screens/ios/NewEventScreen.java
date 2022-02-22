@@ -1,6 +1,6 @@
-package Screens.IoS;
+package screens.ios;
 
-import Screens.BaseScreen;
+import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;

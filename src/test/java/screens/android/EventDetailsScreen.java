@@ -1,6 +1,6 @@
-package Screens.Android;
+package screens.android;
 
-import Screens.BaseScreen;
+import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import org.openqa.selenium.By;

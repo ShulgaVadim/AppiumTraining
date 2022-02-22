@@ -1,5 +1,6 @@
-import Screens.IoS.CalendarIosScreen;
-import Screens.IoS.NewEventScreen;
+import org.junit.jupiter.api.Assertions;
+import screens.ios.CalendarIosScreen;
+import screens.ios.NewEventScreen;
 import io.appium.java_client.ios.IOSDriver;
 import org.junit.*;
 import org.junit.Test;
@@ -10,7 +11,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class IOSCalendarTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class IosCalendarTest {
 
     IOSDriver driver;
     CalendarIosScreen calendarIosScreen;
@@ -65,7 +68,10 @@ public class IOSCalendarTest {
                 .tapAddButton();
         Assert.assertTrue("The event is missed in the list of events", calendarIosScreen.isEventCreated(testEvent.getEventName()));
         calendarIosScreen.showNotifications();
-        Assert.assertEquals("Expected event details don't match to actual ones", calendarIosScreen.getDetailsFromAlert(testEvent.getEventName()), testEvent.getIosDetailsFromPush());
+        Assertions.assertAll(
+                () -> assertEquals(calendarIosScreen.getEntityOfPushNotifications(), 1, "Calendar push notification is not the only one"),
+                () -> assertEquals(calendarIosScreen.getDetailsFromAlert(), testEvent.getIosDetailsFromPush(), "Expected event details don't match to actual ones"))
+        ;
         calendarIosScreen.hideNotifications();
     }
 

@@ -1,6 +1,6 @@
-package Screens.IoS;
+package screens.ios;
 
-import Screens.BaseScreen;
+import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
@@ -26,7 +26,7 @@ public class CalendarIosScreen extends BaseScreen {
     private final By CONFIRM_DELETE_BUTTON = MobileBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Delete Event'`]");
     String eventLocator = "**/XCUIElementTypeButton[`name CONTAINS[cd] '%s'`]";
     String eventLocatorInList = "**/XCUIElementTypeCell[`name CONTAINS[cd] '%s'`]";
-    String titleFromAlertLocator = "**/XCUIElementTypeScrollView[`name CONTAINS[cd] '%s'`]";
+    private final By ALERT_CALENDAR = MobileBy.iOSClassChain("**/XCUIElementTypeScrollView[`name CONTAINS[cd] 'CALENDAR'`]");
 
 
     public CalendarIosScreen(AppiumDriver driver) {
@@ -52,9 +52,13 @@ public class CalendarIosScreen extends BaseScreen {
         return findWithWait(MobileBy.iOSClassChain(String.format(eventLocator, eventName))).getText();
     }
 
-    public String getDetailsFromAlert(String title) {
+    public int getEntityOfPushNotifications() {
         WebDriverWait wait = new WebDriverWait(driver, 90);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(MobileBy.iOSClassChain(String.format(titleFromAlertLocator, title)))).getText();
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(ALERT_CALENDAR)).size();
+    }
+
+    public String getDetailsFromAlert() {
+        return findWithWait(ALERT_CALENDAR).getText();
     }
 
     public CalendarIosScreen deleteEvent(String eventName) {

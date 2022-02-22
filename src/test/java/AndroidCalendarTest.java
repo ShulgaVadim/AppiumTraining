@@ -1,6 +1,6 @@
-import Screens.Android.CalendarAndroidScreen;
-import Screens.Android.EventDetailsScreen;
-import Screens.Android.NewEventScreen;
+import screens.android.CalendarAndroidScreen;
+import screens.android.EventDetailsScreen;
+import screens.android.NewEventScreen;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
@@ -81,6 +81,7 @@ public class AndroidCalendarTest {
         Assert.assertTrue("The event is missed in the list of events", calendarAndroidScreen.isEventCreated(testEvent.getEventName()));
         driver.openNotifications();
         Assertions.assertAll(
+                () -> assertEquals(calendarAndroidScreen.getEntityOfPushNotifications(), 1, "Calendar push notification is not the only one"),
                 () -> assertTrue(calendarAndroidScreen.validateTitleFromPush(testEvent.getEventName()), "Event title is not correct"),
                 () -> assertTrue(calendarAndroidScreen.validateTimeFromPush(testEvent.getAndroidTimeFromPush()), "Event time is not correct"))
         ;

@@ -1,4 +1,4 @@
-package Screens;
+package screens;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;

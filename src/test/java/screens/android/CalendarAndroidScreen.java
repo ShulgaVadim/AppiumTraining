@@ -1,6 +1,6 @@
-package Screens.Android;
+package screens.android;
 
-import Screens.BaseScreen;
+import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
@@ -13,8 +13,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CalendarAndroidScreen extends BaseScreen {
 
@@ -24,8 +22,9 @@ public class CalendarAndroidScreen extends BaseScreen {
     private final By ADD_NEW_EVENT_BUTTON = MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"Create new event\")");
     private final By EVENT_BUTTON = MobileBy.AndroidUIAutomator("new UiSelector().text(\"Event\")");
     private final By OK_BUTTON = MobileBy.id("android:id/button1");
-    private final By TIME_FROM_PUSH = MobileBy.xpath("//android.widget.ScrollView[@resource-id=\"com.android.systemui:id/notification_stack_scroller\"]/android.widget.FrameLayout[1]//android.widget.TextView[@resource-id=\"android:id/big_text\"]");
-    String titleFromPushLocator = "//android.widget.TextView[@resource-id=\"android:id/title\" and contains(@text,'%s')]";
+    private final By PUSH_NOTIFICATION_CALENDAR = MobileBy.xpath("//android.widget.TextView[@text =\"Calendar\"]/ancestor::android.widget.FrameLayout[1]");
+    private final By TITLE_FROM_PUSH = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.TextView\").resourceId(\"android:id/title\")");
+    private final By TIME_FROM_PUSH = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.TextView\").resourceId(\"android:id/big_text\")");
 
     public CalendarAndroidScreen(AppiumDriver driver) {
         super(driver);
@@ -69,24 +68,16 @@ public class CalendarAndroidScreen extends BaseScreen {
         return this;
     }
 
-    public boolean validateTitleFromPush(String title) {
-        Pattern pattern = Pattern.compile(title);
-        Matcher matcher = pattern.matcher(getTitleFromPush(title));
-        return matcher.find();
+    public int getEntityOfPushNotifications() {
+        WebDriverWait wait = new WebDriverWait(driver, 50);
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(PUSH_NOTIFICATION_CALENDAR)).size();
     }
 
-    public String getTitleFromPush(String title) {
-        WebDriverWait wait = new WebDriverWait(driver, 30);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(MobileBy.xpath(String.format(titleFromPushLocator, title)))).getText();
+    public boolean validateTitleFromPush(String title) {
+        return driver.findElement(PUSH_NOTIFICATION_CALENDAR).findElement(TITLE_FROM_PUSH).getText().contains(title);
     }
 
     public boolean validateTimeFromPush(String time) {
-        Pattern pattern = Pattern.compile(time);
-        Matcher matcher = pattern.matcher(getTimeFromPush());
-        return matcher.find();
-    }
-
-    public String getTimeFromPush() {
-        return findWithWait(TIME_FROM_PUSH).getText();
+        return driver.findElement(PUSH_NOTIFICATION_CALENDAR).findElement(TIME_FROM_PUSH).getText().contains(time);
     }
 }
