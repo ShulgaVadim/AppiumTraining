@@ -8,11 +8,9 @@ import org.openqa.selenium.By;
 public class EventDetailsScreen extends BaseScreen {
     private AppiumDriver driver;
 
-
     public final By ACTUAL_NAME = MobileBy.id("title");
     public final By ACTUAL_TIME = MobileBy.id("time");
     String expectedLocation = "new UiSelector().resourceId(\"com.google.android.calendar:id/first_line_text\").textContains(\"%s\")";
-
 
     public EventDetailsScreen(AppiumDriver driver) {
         super(driver);

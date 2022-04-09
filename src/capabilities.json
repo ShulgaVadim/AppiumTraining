@@ -1,0 +1,29 @@
+[
+  {
+    "name": "android",
+    "caps": {
+      "platformName": "Android",
+      "automationName": "UiAutomator2",
+      "udid": "emulator-5554",
+      "deviceName": "Pixel_2_API_29",
+      "avd": "Pixel_2_API_29",
+      "appPackage": "com.google.android.calendar",
+      "appActivity": "com.android.calendar.LaunchActivity",
+      "noReset": "true",
+      "newCommandTimeout": 100
+    }
+  },
+  {
+    "name": "ios",
+    "caps": {
+      "platformName": "iOS",
+      "platformVersion": "15.2",
+      "automationName": "XCUITest",
+      "udid": "985A2290-A9D8-4A7C-89B2-73C6211EAC93",
+      "deviceName": "iPhone Simulator",
+      "bundleId": "com.apple.mobilecal",
+      "noReset": "true",
+      "newCommandTimeout": 100
+    }
+  }
+]

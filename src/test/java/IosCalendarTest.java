@@ -1,15 +1,13 @@
+import appiumdriver.AppiumDriverSingleton;
+import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
 import screens.ios.CalendarIosScreen;
 import screens.ios.NewEventScreen;
 import io.appium.java_client.ios.IOSDriver;
 import org.junit.*;
 import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,23 +19,13 @@ public class IosCalendarTest {
     Event testEvent = new Event("Test Event", 2, 5, "Chicago");
 
     @Before
-    public void setUp() throws MalformedURLException {
-        URL driverURL = new URL("http://0.0.0.0:4723/wd/hub");
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "iOS");
-        caps.setCapability("platformVersion", "15.2");
-        caps.setCapability("automationName", "XCUITest");
-        caps.setCapability("udid", "985A2290-A9D8-4A7C-89B2-73C6211EAC93");
-        caps.setCapability("bundleId", "com.apple.mobilecal");
-        caps.setCapability("deviceName", "iPhone Simulator");
-        caps.setCapability("noReset", "true");
-        caps.setCapability("newCommandTimeout", 100);
-        driver = new IOSDriver(driverURL, caps);
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    public void setUp() throws Exception {
+        driver = AppiumDriverSingleton.getInstance();
         calendarIosScreen = new CalendarIosScreen(driver);
         newEventScreen = new NewEventScreen(driver);
     }
 
+    @Description("3.Create new event on iOS platform")
     @Test
     public void createEvent() {
         driver.resetApp();
@@ -54,6 +42,7 @@ public class IosCalendarTest {
         Assert.assertEquals("Expected event details don't match to actual ones", calendarIosScreen.getExpectedDetails(testEvent.getEventName()), testEvent.getIosEventDetails());
     }
 
+    @Description("4.Create new event with alert on iOS platform")
     @Test
     public void createEventWithAlert() {
         driver.resetApp();

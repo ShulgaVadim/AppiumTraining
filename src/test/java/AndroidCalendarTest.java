@@ -1,3 +1,9 @@
+import appiumdriver.AppiumDriverSingleton;
+import io.qameta.allure.Description;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.Result;
 import screens.android.CalendarAndroidScreen;
 import screens.android.EventDetailsScreen;
 import screens.android.NewEventScreen;
@@ -5,48 +11,35 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import org.junit.*;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import utils.MyTestWatcher;
+
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AndroidCalendarTest {
+@ExtendWith(MyTestWatcher.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class AndroidCalendarTest extends Result {
     AndroidDriver driver;
     CalendarAndroidScreen calendarAndroidScreen;
     NewEventScreen newEventScreen;
     EventDetailsScreen eventDetailsScreen;
-    Event testEvent = new Event("Test Event", 1, 8, "Paris");
+    Event testEvent = new Event("Test Event", 2, 8, "Paris");
 
-    @Before
-    public void setUp() throws MalformedURLException {
-        URL driverURL = new URL("http://0.0.0.0:4723/wd/hub");
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "Android");
-        caps.setCapability("automationName", "UiAutomator2");
-        caps.setCapability("udid", "emulator-5554");
-        caps.setCapability("deviceName", "Pixel_2_API_29");
-        caps.setCapability("avd", "Pixel_2_API_29");
-        caps.setCapability("appPackage", "com.google.android.calendar");
-        caps.setCapability("appActivity", "com.android.calendar.LaunchActivity");
-        caps.setCapability("noReset", "true");
-        caps.setCapability("newCommandTimeout", 100);
 
-        driver = new AndroidDriver(driverURL, caps);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    @BeforeEach
+    public void setUp() throws Exception {
+        driver = AppiumDriverSingleton.getInstance();
         calendarAndroidScreen = new CalendarAndroidScreen(driver);
         newEventScreen = new NewEventScreen(driver);
         eventDetailsScreen = new EventDetailsScreen(driver);
     }
 
+    @Description("1.Create new event with location on Android platform")
     @Test
-    public void createEventTest() {
+    public void createEventTest() throws Exception {
         calendarAndroidScreen
                 .tapAddNewEventButton()
                 .selectEventButton();
@@ -59,7 +52,6 @@ public class AndroidCalendarTest {
         Assert.assertTrue("The event is missed in the list of events", calendarAndroidScreen.isEventCreated(testEvent.getEventName()));
         calendarAndroidScreen
                 .openEvent(testEvent.getEventName());
-
         Assertions.assertAll(
                 () -> assertEquals(testEvent.getEventName(), eventDetailsScreen.getActualName(), "Event name is incorrect"),
                 () -> assertEquals(testEvent.getAndroidEventDetails(), eventDetailsScreen.getActualTime(), "Event time is incorrect"),
@@ -67,6 +59,7 @@ public class AndroidCalendarTest {
         );
     }
 
+    @Description("2. Create new event with push notification on Android platform")
     @Test
     public void createEventWithPushN() {
         calendarAndroidScreen
@@ -87,17 +80,18 @@ public class AndroidCalendarTest {
         ;
     }
 
-    @After
+    @AfterEach
     public void deleteEvent() {
-        driver.launchApp();
         driver.pressKey(new KeyEvent(AndroidKey.BACK));
+        driver.launchApp();
         calendarAndroidScreen.deleteEvent(testEvent.getEventName());
     }
 
-
-    @After
+    @AfterAll
     public void driverTearDown() throws IOException {
-        driver.quit();
+        if (driver != null) {
+            AppiumDriverSingleton.quit();
+        }
         Runtime.getRuntime().exec("adb -s emulator-5554 emu kill");
     }
 }
