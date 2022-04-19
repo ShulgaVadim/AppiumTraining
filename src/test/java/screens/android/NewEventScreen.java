@@ -1,5 +1,6 @@
 package screens.android;
 
+import io.qameta.allure.Step;
 import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -32,11 +33,13 @@ public class NewEventScreen extends BaseScreen {
         this.driver = driver;
     }
 
+    @Step("Enter title {eventName} to the title field")
     public NewEventScreen enterEventTitle(String eventName) {
         findWithWait(TITLE).sendKeys(eventName);
         return this;
     }
 
+    @Step("Enter start date {startHours}:{startMins} to the start time field")
     public NewEventScreen enterStartDate(String startHours, String startMins) {
         driver.findElement(START_TIME_BUTTON).click();
         driver.findElement(KEYBOARD_BUTTON).click();
@@ -46,6 +49,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Enter end date {endHours}:{endMins} to the end time field")
     public NewEventScreen enterEndDate(String endHours, String endMins) {
         driver.findElement(END_TIME_BUTTON).click();
         driver.findElement(KEYBOARD_BUTTON).click();
@@ -55,6 +59,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Enter location {location} to the location field")
     public NewEventScreen enterLocation(String location) {
         findWithWait(ADD_LOCATION_BUTTON).click();
         findWithWait(SEARCH_BUTTON).sendKeys(location);
@@ -62,6 +67,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Add notification for event")
     public NewEventScreen addNotification() {
         driver.findElement(DELETE_DEFAULT_NOTIFICATION).click();
         driver.findElement(ADD_NOTIFICATION).click();
@@ -69,6 +75,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Click 'Save' button ")
     public CalendarAndroidScreen saveEvent() {
         driver.findElement(SAVE_BUTTON).click();
         return new CalendarAndroidScreen(driver);

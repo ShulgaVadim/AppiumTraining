@@ -1,5 +1,6 @@
 package screens.ios;
 
+import io.qameta.allure.Step;
 import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -32,11 +33,13 @@ public class NewEventScreen extends BaseScreen {
         this.driver = driver;
     }
 
+    @Step("Enter title {title} to the title field")
     public NewEventScreen enterTitle(String title) {
         findWithWait(TITLE_FIELD).sendKeys(title);
         return this;
     }
 
+    @Step("Enter location {location} to the location field")
     public NewEventScreen enterLocation(String location) {
         findWithWait(LOCATION_FIELD).click();
         findWithWait(ENTER_LOCATION_FIELD).sendKeys(location);
@@ -44,6 +47,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Enter start date {startHours}:{startMins} {startDayTime} to the start time field")
     public NewEventScreen enterStartDate(String startHours, String startMins, String startDayTime) {
         findWithWait(START_DATE_BUTTON).click();
         List<MobileElement> wheelsStart = driver.findElements(START_TIME_WHEEL);
@@ -55,6 +59,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Enter end date {endHours}:{endMins} {endDayTime} to the end time field")
     public NewEventScreen enterEndDate(String endHours, String endMins, String endDayTime) {
         findWithWait(END_DATE_BUTTON).click();
         List<MobileElement> wheelsEnd = driver.findElements(END_TIME_WHEEL);
@@ -65,6 +70,7 @@ public class NewEventScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Double click on element {element}")
     public void doubleClick(MobileElement element) {
         new TouchAction(driver).tap(tapOptions()
                         .withTapsCount(2)
@@ -72,12 +78,14 @@ public class NewEventScreen extends BaseScreen {
                 .perform();
     }
 
+    @Step("Add alert to event")
     public NewEventScreen addAlert() {
         driver.findElement(ALERT_BUTTON).click();
         findWithWait(AT_TIME_OF_EVENT).click();
         return this;
     }
 
+    @Step("Click 'Add' button")
     public CalendarIosScreen tapAddButton() {
         findWithWait(ADD_BUTTON).click();
         return new CalendarIosScreen(driver);

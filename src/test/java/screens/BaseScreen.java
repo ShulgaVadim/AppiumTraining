@@ -5,6 +5,7 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -43,10 +44,12 @@ public abstract class BaseScreen {
         return wait.until(elementIsDisplayed(by));
     }
 
+    @Step("Show notifications")
     public void showNotifications() {
         manageNotifications(true);
     }
 
+    @Step("Hide notifications")
     public void hideNotifications() {
         manageNotifications(false);
     }

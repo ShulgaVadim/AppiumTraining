@@ -1,5 +1,6 @@
 package screens.android;
 
+import io.qameta.allure.Step;
 import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -31,25 +32,29 @@ public class CalendarAndroidScreen extends BaseScreen {
         this.driver = driver;
     }
 
+    @Step("Tap 'Add new event' button")
     public CalendarAndroidScreen tapAddNewEventButton() {
         findWithWait(ADD_NEW_EVENT_BUTTON).click();
         return this;
     }
 
+    @Step("Tap 'Event' button")
     public NewEventScreen selectEventButton() {
         findWithWait(EVENT_BUTTON).click();
         return new NewEventScreen(driver);
     }
-
+    @Step("Checking that event {eventName} is created")
     public Boolean isEventCreated(String eventName) {
         return !driver.findElements(MobileBy.AndroidUIAutomator(String.format(eventLocator, eventName))).isEmpty();
     }
 
+    @Step("Open event {eventName}")
     public EventDetailsScreen openEvent(String eventName) {
         findWithWait(MobileBy.AndroidUIAutomator(String.format(eventLocator, eventName))).click();
         return new EventDetailsScreen(driver);
     }
 
+    @Step("Delete event {eventName}")
     public CalendarAndroidScreen deleteEvent(String eventName) {
         if (!driver.findElements(MobileBy.AndroidUIAutomator(String.format(eventLocator, eventName))).isEmpty()) {
             MobileElement event = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(String.format(eventLocator, eventName)));
@@ -68,15 +73,18 @@ public class CalendarAndroidScreen extends BaseScreen {
         return this;
     }
 
+    @Step("Get entity of push notifications")
     public int getEntityOfPushNotifications() {
         WebDriverWait wait = new WebDriverWait(driver, 50);
         return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(PUSH_NOTIFICATION_CALENDAR)).size();
     }
 
+    @Step("Validation the title {title} from push notification matches the created one.")
     public boolean validateTitleFromPush(String title) {
         return driver.findElement(PUSH_NOTIFICATION_CALENDAR).findElement(TITLE_FROM_PUSH).getText().contains(title);
     }
 
+    @Step("Validation the time {time} from push notification matches the created one.")
     public boolean validateTimeFromPush(String time) {
         return driver.findElement(PUSH_NOTIFICATION_CALENDAR).findElement(TIME_FROM_PUSH).getText().contains(time);
     }

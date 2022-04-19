@@ -1,5 +1,6 @@
 package screens.android;
 
+import io.qameta.allure.Step;
 import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -17,14 +18,17 @@ public class EventDetailsScreen extends BaseScreen {
         this.driver = driver;
     }
 
+    @Step("Get name of event from opened eventDetails page")
     public String getActualName() {
         return findWithWait(ACTUAL_NAME).getText();
     }
 
+    @Step("Get time of event from opened eventDetails page")
     public String getActualTime() {
         return findWithWait(ACTUAL_TIME).getText();
     }
 
+    @Step("Get location of event from opened eventDetails page")
     public String getActualLocation(String location) {
         return driver.findElement(MobileBy.AndroidUIAutomator(String.format(expectedLocation, location))).getText();
     }

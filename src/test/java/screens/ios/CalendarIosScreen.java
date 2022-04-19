@@ -1,5 +1,6 @@
 package screens.ios;
 
+import io.qameta.allure.Step;
 import screens.BaseScreen;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -34,33 +35,40 @@ public class CalendarIosScreen extends BaseScreen {
         this.driver = driver;
     }
 
+    @Step("Click 'Today' button")
     public CalendarIosScreen tapTodayButton() {
         findWithWait(TODAY_BUTTON).click();
         return this;
     }
 
+    @Step("Click 'Add new event' button")
     public NewEventScreen tapAddNewEventButton() {
         findWithWait(ADD_NEW_EVENT_BUTTON).click();
         return new NewEventScreen(driver);
     }
 
+    @Step("Checking that event {eventName} is created")
     public Boolean isEventCreated(String eventName) {
         return !driver.findElements(MobileBy.iOSClassChain(String.format(eventLocator, eventName))).isEmpty();
     }
 
+    @Step("Get event details for event {eventName}")
     public String getExpectedDetails(String eventName) {
         return findWithWait(MobileBy.iOSClassChain(String.format(eventLocator, eventName))).getText();
     }
 
+    @Step("Get entity of push notifications")
     public int getEntityOfPushNotifications() {
         WebDriverWait wait = new WebDriverWait(driver, 90);
         return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(ALERT_CALENDAR)).size();
     }
 
+    @Step("Get event details from alert")
     public String getDetailsFromAlert() {
         return findWithWait(ALERT_CALENDAR).getText();
     }
 
+    @Step("Delete event {eventName}")
     public CalendarIosScreen deleteEvent(String eventName) {
         if (!driver.findElements(MobileBy.iOSClassChain(String.format(eventLocator, eventName))).isEmpty()) {
             findWithWait(LIST_BUTTON).click();

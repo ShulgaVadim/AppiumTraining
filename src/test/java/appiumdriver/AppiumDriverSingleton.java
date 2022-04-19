@@ -19,7 +19,7 @@ public class AppiumDriverSingleton {
     public static <T extends AppiumDriver> T getInstance() throws Exception {
         if (driver == null) {
             String appEnv = System.getProperty("app.env");
-            DesiredCapabilities caps = new CapabilitiesReader().getDesiredCapabilities(appEnv, "/src/capabilities.json");
+            DesiredCapabilities caps = new CapabilitiesReader().getDesiredCapabilities(appEnv, "/src/test/resources/capabilities.json");
             URL driverURL = new URL("http://0.0.0.0:4723/wd/hub");
             switch (appEnv) {
                 case ("android"):
@@ -27,6 +27,8 @@ public class AppiumDriverSingleton {
                     break;
                 case ("ios"):
                     driver = new IOSDriver(driverURL, caps);
+                default:
+                    driver = new AndroidDriver(driverURL, caps);
             }
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }

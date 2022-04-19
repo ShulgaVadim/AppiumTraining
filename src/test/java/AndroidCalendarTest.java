@@ -39,7 +39,7 @@ public class AndroidCalendarTest extends Result {
 
     @Description("1.Create new event with location on Android platform")
     @Test
-    public void createEventTest() throws Exception {
+    public void createEventTest() {
         calendarAndroidScreen
                 .tapAddNewEventButton()
                 .selectEventButton();
